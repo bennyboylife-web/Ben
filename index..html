@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Minimaliste</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Masquer la barre de défilement tout en gardant le scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md h-[550px] bg-zinc-900 border border-zinc-800 rounded-2xl flex flex-col justify-between shadow-2xl overflow-hidden">
+        
+        <!-- En-tête -->
+        <div class="p-4 border-b border-zinc-800/80 flex items-center justify-between bg-zinc-900/50 backdrop-blur-sm">
+            <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                <h1 class="text-xs font-medium tracking-wider uppercase text-zinc-400">Chat Local</h1>
+            </div>
+            <button id="clear-btn" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Effacer</button>
+        </div>
+
+        <div id="messages" class="flex-1 p-4 overflow-y-auto space-y-3 no-scrollbar">
+            <!-- Message de bienvenue initial -->
+            <div class="flex justify-start">
+                <div class="max-w-[80%] rounded-2xl px-4 py-2.5 bg-zinc-800 text-zinc-300 text-sm border border-zinc-700/50 shadow-sm">
+                    Bonjour ! Tapez un message ci-dessous pour démarrer.
+                </div>
+            </div>
+        </div>
+
+        <form id="chat-form" class="p-3 border-t border-zinc-800/80 bg-zinc-900/50 backdrop-blur-sm">
+            <div class="relative flex items-center">
+                <input 
+                    type="text" 
+                    id="message-input" 
+                    placeholder="Écrivez votre message..." 
+                    autocomplete="off"
+                    class="w-full bg-zinc-950 text-zinc-100 placeholder-zinc-500 text-sm rounded-xl pl-4 pr-12 py-3 border border-zinc-800 focus:outline-none focus:border-zinc-600 transition-colors"
+                >
+                <button 
+                    type="submit" 
+                    class="absolute right-1.5 p-2 bg-zinc-100 hover:bg-white text-zinc-950 rounded-lg transition-colors flex items-center justify-center shadow-sm"
+                    aria-label="Envoyer"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('chat-form');
+        const input = document.getElementById('message-input');
+        const messagesContainer = document.getElementById('messages');
+        const clearBtn = document.getElementById('clear-btn');
+
+        // Fonction pour ajouter un message à l'écran
+        function addMessage(text, isUser = true) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in`;
+
+            const messageDiv = document.createElement('div');
+            
+            if (isUser) {
+                messageDiv.className = 'max-w-[80%] rounded-2xl px-4 py-2.5 bg-zinc-100 text-zinc-950 text-sm font-normal shadow-sm';
+            } else {
+                messageDiv.className = 'max-w-[80%] rounded-2xl px-4 py-2.5 bg-zinc-800 text-zinc-300 text-sm border border-zinc-700/50 shadow-sm';
+            }
+
+            messageDiv.textContent = text;
+            wrapper.appendChild(messageDiv);
+            messagesContainer.appendChild(wrapper);
+
+            // Défiler automatiquement vers le bas
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Gestionnaire d'événement pour l'envoi du formulaire
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = input.value.trim();
+            
+            if (text !== '') {
+                // Ajouter le message de l'utilisateur
+                addMessage(text, true);
+                input.value = '';
+
+                // Réponse automatique ultra-simple pour simuler un échange
+                setTimeout(() => {
+                    const responses = [
+                        "Message bien reçu !",
+                        "Intéressant...",
+                        "Absolument.",
+                        "En effet !"
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage(randomResponse, false);
+                }, 600);
+            }
+        });
+
+        // Effacer la conversation
+        clearBtn.addEventListener('click', () => {
+            messagesContainer.innerHTML = '';
+        });
+    </script>
+</body>
+</html>
